@@ -25,11 +25,17 @@ tmp = null
 debug = false
 
 # The safe configuration keys to apply to the browserify bundles.
-configs = ['transform', 'ignore', 'external']
+CONFIGS = ['transform', 'ignore', 'external']
 
 # Apply select keys from a configuration object to a browserify bundle.
-applyConfig = (b, cfg) ->
-  (b[c] v for v in [].concat cfg[c] if cfg?[c]? and b?[c]?) for c in configs
+applyConfig = (_browserify, configs) ->
+  return unless configs?
+
+  for config in CONFIGS
+    if configs[config]? and _browserify?[config]?
+      for option in [].concat configs[config]
+        option = [].concat option
+        _browserify[config].apply _browserify, option
 
 # Write the dependency bundle out to the temporary file.
 writeDeps = (callback) ->
